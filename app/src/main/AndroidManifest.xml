@@ -5,7 +5,8 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@android:drawable/ic_menu_send"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:label="VK Link Opener"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
