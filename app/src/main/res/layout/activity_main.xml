@@ -3,49 +3,99 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
+    android:padding="20dp"
     android:background="#1a1a2e">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="VK Link Opener"
-        android:textSize="28sp"
+        android:textSize="24sp"
         android:textColor="#e94560"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dán link VK video vào ↓"
-        android:textSize="16sp"
-        android:textColor="#aaa"
-        android:layout_marginBottom="24dp" />
-
+    <!-- Input area -->
     <EditText
         android:id="@+id/editUrl"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:hint="https://vkvideo.ru/video..."
+        android:layout_height="48dp"
+        android:hint="Dán link VK vào đây..."
         android:textColorHint="#666"
         android:textColor="#ffffff"
-        android:textSize="16sp"
-        android:padding="16dp"
+        android:textSize="14sp"
+        android:padding="12dp"
         android:background="@drawable/edit_bg"
         android:inputType="textUri"
         android:singleLine="true"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="12dp" />
 
-    <Button
-        android:id="@+id/btnOpen"
+    <!-- Buttons row -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="MỞ LINK"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#ffffff"
-        android:background="@drawable/btn_bg" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="+ THÊM"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="@drawable/btn_bg"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btnImport"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="IMPORT"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="@drawable/btn_import_bg" />
+
+    </LinearLayout>
+
+    <!-- Count + Clear -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0 link"
+            android:textColor="#aaa"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="XÓA TẤT CẢ"
+            android:textSize="11sp"
+            android:textColor="#e94560"
+            android:background="@android:color/transparent" />
+
+    </LinearLayout>
+
+    <!-- URL List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerUrls"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>
