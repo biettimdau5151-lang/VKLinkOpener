@@ -11,10 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,6 +30,16 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerUrls;
     ArrayList<String> urlList;
     UrlAdapter adapter;
+
+    private final ActivityResultLauncher<Intent> filePickerLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Uri uri = result.getData().getData();
+                if (uri != null) {
+                    importFromFile(uri);
+                }
+            }
+        });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerUrls.setLayoutManager(new LinearLayoutManager(this));
         recyclerUrls.setAdapter(adapter);
 
-        // Add single URL
         btnAdd.setOnClickListener(v -> {
             String url = editUrl.getText().toString().trim();
             if (url.isEmpty()) {
@@ -59,10 +73,8 @@ public class MainActivity extends AppCompatActivity {
             editUrl.setText("");
         });
 
-        // Import from clipboard or manual input
         btnImport.setOnClickListener(v -> showImportDialog());
 
-        // Clear all
         btnClear.setOnClickListener(v -> {
             if (urlList.isEmpty()) {
                 Toast.makeText(this, "Danh sach trong!", Toast.LENGTH_SHORT).show();
@@ -81,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
                 .show();
         });
 
-        // Handle share intent (nhận link từ app khác)
         handleShareIntent(getIntent());
     }
 
@@ -95,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         if (intent != null && Intent.ACTION_SEND.equals(intent.getAction())) {
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (sharedText != null && !sharedText.isEmpty()) {
-                // Extract URLs from shared text
                 String[] lines = sharedText.split("\\s+");
                 for (String line : lines) {
                     line = line.trim();
@@ -109,7 +119,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showImportDialog() {
-        String[] options = {"Paste tu bo nho", "Nhap nhieu link (moi dong 1 link)"};
+        String[] options = {
+            "Paste tu bo nho",
+            "Nhap nhieu link (moi dong 1 link)",
+            "Chon file .txt"
+        };
 
         new AlertDialog.Builder(this)
             .setTitle("Import link VK")
@@ -121,9 +135,36 @@ public class MainActivity extends AppCompatActivity {
                     case 1:
                         showMultiInputDialog();
                         break;
+                    case 2:
+                        pickTxtFile();
+                        break;
                 }
             })
             .show();
+    }
+
+    private void pickTxtFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/*");
+        filePickerLauncher.launch(intent);
+    }
+
+    private void importFromFile(Uri uri) {
+        try {
+            InputStream is = getContentResolver().openInputStream(uri);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            reader.close();
+            is.close();
+            importUrls(sb.toString());
+        } catch (Exception e) {
+            Toast.makeText(this, "Loi doc file: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void importFromClipboard() {
